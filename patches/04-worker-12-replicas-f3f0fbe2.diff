@@ -1,0 +1,19 @@
+commit f3f0fbe2c65e3e1b0f78438bb9c48fd8e5e06af8
+Author: Brad Smith <brasmith@redhat.com>
+Date:   Wed Sep 7 14:57:57 2022 -0400
+
+    force worker replica count to 12 for testing
+
+diff --git a/deployment/playbooks/roles/clowder/tasks/clowder.yml b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+index 2e9b663b..08c363cb 100644
+--- a/deployment/playbooks/roles/clowder/tasks/clowder.yml
++++ b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+@@ -27,6 +27,8 @@
+         --timeout 600 \
+         --import-secrets \
+         --secrets-dir "{{ clowder_tmp_dir.path }}/secrets" \
++        --set-parameter "cloudigrade/CELERY_WORKER_REPLICA_COUNT=12" \
++        --set-parameter "cloudigrade/CELERY_WORKER_REPLICA_COUNT_MAX=12" \
+         --set-parameter "cloudigrade/IMAGE=quay.io/{{ lookup('env', 'CLOUDIGRADE_QUAY_USER') | default('cloudservices', True) }}/cloudigrade" \
+         --set-parameter "cloudigrade/IMAGE_TAG={{ lookup('env', 'CLOUDIGRADE_IMAGE_TAG') | default('latest', True) }}" \
+         --set-parameter "postigrade/IMAGE=quay.io/{{ lookup('env', '{POSTIGRADE_QUAY_USER') | default('cloudservices', True) }}/postigrade" \
