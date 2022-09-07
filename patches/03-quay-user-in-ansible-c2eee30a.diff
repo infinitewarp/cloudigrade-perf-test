@@ -1,0 +1,20 @@
+commit c2eee30a81f54875f2c716b7ff9a08ac745c5502
+Author: Brad Smith <brasmith@redhat.com>
+Date:   Wed Sep 7 14:21:50 2022 -0400
+
+    accept CLOUDIGRADE_QUAY_USER and POSTIGRADE_QUAY_USER env vars in ansible-playbook clowder task to set the quay user that owns the image
+
+diff --git a/deployment/playbooks/roles/clowder/tasks/clowder.yml b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+index e8cef4bc..2e9b663b 100644
+--- a/deployment/playbooks/roles/clowder/tasks/clowder.yml
++++ b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+@@ -27,7 +27,9 @@
+         --timeout 600 \
+         --import-secrets \
+         --secrets-dir "{{ clowder_tmp_dir.path }}/secrets" \
++        --set-parameter "cloudigrade/IMAGE=quay.io/{{ lookup('env', 'CLOUDIGRADE_QUAY_USER') | default('cloudservices', True) }}/cloudigrade" \
+         --set-parameter "cloudigrade/IMAGE_TAG={{ lookup('env', 'CLOUDIGRADE_IMAGE_TAG') | default('latest', True) }}" \
++        --set-parameter "postigrade/IMAGE=quay.io/{{ lookup('env', '{POSTIGRADE_QUAY_USER') | default('cloudservices', True) }}/postigrade" \
+         --set-parameter "postigrade/IMAGE_TAG={{ lookup('env', 'POSTIGRADE_IMAGE_TAG') | default('latest', True) }}"  \
+         --set-parameter "cloudigrade/CLOUDIGRADE_ENVIRONMENT={{ env }}" \
+         --set-parameter "cloudigrade/DJANGO_SETTINGS_MODULE=config.settings.prod" \
