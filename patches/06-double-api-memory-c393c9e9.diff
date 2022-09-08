@@ -1,0 +1,19 @@
+commit c393c9e961e460461f0d811e0e90a23f4cfc1993
+Author: Brad Smith <brasmith@redhat.com>
+Date:   Thu Sep 8 15:44:40 2022 -0400
+
+    double api memory for testing
+
+diff --git a/deployment/playbooks/roles/clowder/tasks/clowder.yml b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+index 69a8e416..d4b793af 100644
+--- a/deployment/playbooks/roles/clowder/tasks/clowder.yml
++++ b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+@@ -29,6 +29,8 @@
+         --secrets-dir "{{ clowder_tmp_dir.path }}/secrets" \
+         --set-parameter "cloudigrade/API_REPLICA_COUNT=1" \
+         --set-parameter "cloudigrade/API_REPLICA_COUNT_MAX=1" \
++        --set-parameter "cloudigrade/API_LIMITS_CONTAINER_MEM_REQUEST=512Mi" \
++        --set-parameter "cloudigrade/API_LIMITS_CONTAINER_MEM_LIMIT=1024Mi" \
+         --set-parameter "cloudigrade/CELERY_WORKER_REPLICA_COUNT=12" \
+         --set-parameter "cloudigrade/CELERY_WORKER_REPLICA_COUNT_MAX=12" \
+         --set-parameter "cloudigrade/IMAGE=quay.io/{{ lookup('env', 'CLOUDIGRADE_QUAY_USER') | default('cloudservices', True) }}/cloudigrade" \
