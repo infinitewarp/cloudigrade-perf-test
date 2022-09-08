@@ -1,0 +1,19 @@
+commit 31d518e8187acb052688bd668d8cf707176d3b68
+Author: Brad Smith <brasmith@redhat.com>
+Date:   Thu Sep 8 11:52:38 2022 -0400
+
+    force api replica count to 1 for testing
+
+diff --git a/deployment/playbooks/roles/clowder/tasks/clowder.yml b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+index 08c363cb..69a8e416 100644
+--- a/deployment/playbooks/roles/clowder/tasks/clowder.yml
++++ b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+@@ -27,6 +27,8 @@
+         --timeout 600 \
+         --import-secrets \
+         --secrets-dir "{{ clowder_tmp_dir.path }}/secrets" \
++        --set-parameter "cloudigrade/API_REPLICA_COUNT=1" \
++        --set-parameter "cloudigrade/API_REPLICA_COUNT_MAX=1" \
+         --set-parameter "cloudigrade/CELERY_WORKER_REPLICA_COUNT=12" \
+         --set-parameter "cloudigrade/CELERY_WORKER_REPLICA_COUNT_MAX=12" \
+         --set-parameter "cloudigrade/IMAGE=quay.io/{{ lookup('env', 'CLOUDIGRADE_QUAY_USER') | default('cloudservices', True) }}/cloudigrade" \
