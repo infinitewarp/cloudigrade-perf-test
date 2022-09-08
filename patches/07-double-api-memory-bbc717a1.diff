@@ -1,0 +1,24 @@
+commit bbc717a1befd375ce9f9c5f28c15b496be5e3b3f
+Author: Brad Smith <brasmith@redhat.com>
+Date:   Thu Sep 8 17:22:57 2022 -0400
+
+    double api memory for testing, second try
+
+diff --git a/deployment/clowdapp.yaml b/deployment/clowdapp.yaml
+index 4e745568..efadda49 100644
+--- a/deployment/clowdapp.yaml
++++ b/deployment/clowdapp.yaml
+@@ -1384,11 +1384,11 @@ parameters:
+ - name: API_LIMITS_CONTAINER_MEM_LIMIT
+   displayName: Cloudigrade Container Memory Limit
+   required: true
+-  value: 512Mi
++  value: 1024Mi
+ - name: API_LIMITS_CONTAINER_MEM_REQUEST
+   displayName: Cloudigrade Container Memory Request
+   required: true
+-  value: 256Mi
++  value: 512Mi
+ - name: API_LIMITS_CONTAINER_CPU_LIMIT
+   displayName: Cloudigrade Container CPU Limit
+   required: true
