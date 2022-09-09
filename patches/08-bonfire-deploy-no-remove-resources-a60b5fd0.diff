@@ -1,0 +1,26 @@
+commit a60b5fd06b3b2a7b40ba65f27aee30ad7998d0e7
+Author: Brad Smith <brasmith@redhat.com>
+Date:   Fri Sep 9 10:29:51 2022 -0400
+
+    bonfire deploy --no-remove-resources cloudigrade
+
+diff --git a/deployment/playbooks/roles/clowder/tasks/clowder.yml b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+index d4b793af..c39e650d 100644
+--- a/deployment/playbooks/roles/clowder/tasks/clowder.yml
++++ b/deployment/playbooks/roles/clowder/tasks/clowder.yml
+@@ -22,6 +22,7 @@
+   - name: create / run bonfire deploy - master
+     shell: |
+       bonfire deploy cloudigrade \
++        --no-remove-resources cloudigrade \
+         --clowd-env env-{{ namespace }} \
+         --namespace {{ namespace }} \
+         --timeout 600 \
+@@ -65,6 +66,7 @@
+   - name: create / run bonfire deploy - local push
+     shell: |
+       bonfire deploy cloudigrade \
++        --no-remove-resources cloudigrade \
+         --clowd-env env-{{ namespace }} \
+         --namespace {{ namespace }} \
+         --timeout 600 \
