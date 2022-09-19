@@ -510,18 +510,18 @@ main () {
             fi
         fi
 
-        err "cherry-picking additional code over ${BASE_REF} (ubi${UBI})"
+        err "patching additional code over ${BASE_REF} (ubi${UBI})"
         sleep_for 3
 
-        CHERRY_PICK_COMMITS=(
-            4f06f3d1  # add ENABLE_SYNTHETIC_DATA_REQUEST_HTTP_API to playbook task for convenience with ephemeral deployments
-            968895af  # create task to spam logs with junk for performance testing
-            c2eee30a  # accept CLOUDIGRADE_QUAY_USER and POSTIGRADE_QUAY_USER env vars in ansible-playbook clowder task to set the quay user that owns the image
-            f3f0fbe2  # force worker replica count to 12 for testing
-            31d518e8  # force api replica count to 1 for testing
-            c393c9e9  # double api memory for testing
-            bbc717a1  # double api memory for testing, second try
-            a60b5fd0  # bonfire deploy --no-remove-resources cloudigrade
+        PATCHES=(
+            "${PATCHES_DIR}"/01-enable-snythetic-api-4f06f3d1.diff
+            "${PATCHES_DIR}"/02-new-perf_test_logging-task-968895af.diff
+            "${PATCHES_DIR}"/03-quay-user-in-ansible-c2eee30a.diff
+            "${PATCHES_DIR}"/04-worker-12-replicas-f3f0fbe2.diff
+            "${PATCHES_DIR}"/05-api-1-replica-31d518e8.diff
+            "${PATCHES_DIR}"/06-double-api-memory-c393c9e9.diff
+            "${PATCHES_DIR}"/07-double-api-memory-bbc717a1.diff
+            "${PATCHES_DIR}"/08-bonfire-deploy-no-remove-resources-a60b5fd0.diff
         )
 
         pushd "${CLOUDIGRADE_DIR}"
@@ -531,13 +531,16 @@ main () {
             exit 1
         fi
         git checkout -q "${BASE_REF}" 2>&1 | ts "${TS_FORMAT}" >&2
+
+        for PATCH in "${PATCHES[@]}"; do
+            patch -p1 < "${PATCH}" 2>&1 | ts "${TS_FORMAT}" >&2
+        done
+
         GIT_CHERRY_PICK_ARGS=(
             --no-gpg-sign
             --allow-empty
             --keep-redundant-commits
         )
-        git cherry-pick "${GIT_CHERRY_PICK_ARGS[@]}" "${CHERRY_PICK_COMMITS[@]}" 2>&1 | ts "${TS_FORMAT}" >&2
-
         if [ "${UBI}" = "9" ] && (! head -n1 Dockerfile | grep ubi9); then
             git cherry-pick "${GIT_CHERRY_PICK_ARGS[@]}" --strategy-option theirs da1a2d71b9ec3eb365f29a7b27a7e5c072d81cbb 2>&1 | ts "${TS_FORMAT}" >&2
         elif [ "${UBI}" = "8" ] && (! head -n2 Dockerfile | grep ubi8); then
