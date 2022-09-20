@@ -536,6 +536,8 @@ main () {
             patch -p1 < "${PATCH}" 2>&1 | ts "${TS_FORMAT}" >&2
         done
 
+        git commit --no-gpg-sign --all --message "TEMPORARY TESTING PATCH COMMIT DO NOT MERGE"
+
         GIT_CHERRY_PICK_ARGS=(
             --no-gpg-sign
             --allow-empty
