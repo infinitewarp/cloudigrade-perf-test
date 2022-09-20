@@ -2,6 +2,19 @@
 
 This repo just has a one-off script and patches for `cloudigrade` to test `cloudigrade`'s performance when built over UBI8 versus UBI9. The test specifically focuses on logging because we observed that Watchtower with `use_queues=False` has catastrophically bad performance when running on UBI9 whereas it had acceptable (but still *not great*) performance on UBI8.
 
+# Results
+
+Output captured on 2022-09-13:
+
+- [perf testing ubi8 a63b3b0a (just before first uib9 update)](https://asciinema.org/a/520898)
+- [perf testing ubi9 da1a2d71 (first problematic uib9 update) ](https://asciinema.org/a/520933)
+- [perf testing ubi8 3145a53c (latest master)](https://asciinema.org/a/520881)
+- [perf testing ubi9 3145a53c (latest master)](https://asciinema.org/a/520873)
+
+stdout was captured and combined into [results/2022-09-13.md](results/2022-09-13.md).
+
+See also [cloudigrade/issues/1314#issuecomment-1249671927](https://github.com/cloudigrade/cloudigrade/issues/1314#issuecomment-1249671927).
+
 # Usage
 
 This repo has @infinitewarp's personal one-off script designed and tested only on his local system and may not work on yours. Caveat emptor. Hic sunt dracones.
