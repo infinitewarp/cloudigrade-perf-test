@@ -1,0 +1,63 @@
+commit 968895afdc35a86b757f1e2f2824886ead5a1529
+Author: Brad Smith <brasmith@redhat.com>
+Date:   Wed Sep 7 12:53:07 2022 -0400
+
+    create task to spam logs with junk for performance testing
+
+diff --git a/cloudigrade/api/tasks/__init__.py b/cloudigrade/api/tasks/__init__.py
+index 9745fdce..1dbd613b 100644
+--- a/cloudigrade/api/tasks/__init__.py
++++ b/cloudigrade/api/tasks/__init__.py
+@@ -43,6 +43,7 @@ from api.tasks.maintenance import (
+     delete_orphaned_cloud_accounts,
+     enable_account,
+     migrate_account_numbers_to_org_ids,
++    perf_test_logging,
+ )
+ from api.tasks.sources import (
+     create_from_sources_kafka_message,
+diff --git a/cloudigrade/api/tasks/maintenance.py b/cloudigrade/api/tasks/maintenance.py
+index c614fa3f..8014552b 100644
+--- a/cloudigrade/api/tasks/maintenance.py
++++ b/cloudigrade/api/tasks/maintenance.py
+@@ -683,3 +683,16 @@ def check_and_cache_sqs_queues_lengths():
+             },
+         )
+         cache.set(cache_key, number_of_messages, expiration_ttl)
++
++
++@shared_task(name="api.tasks.perf_test_logging")
++def perf_test_logging(count=5):
++    """Log junk for perf testing"""
++    for _ in range(count):
++        logger.info("this is logger.info %s", _)
++    events = aws_models.AwsInstanceEvent.objects.order_by("?")[:count]
++    for _ in range(min(count, len(events))):
++        logger.info(events[_])
++    for _ in range(count):
++        logger.info("this is another logger.info %s", _)
++    logger.error("this is logger.error")
+diff --git a/cloudigrade/config/settings/base.py b/cloudigrade/config/settings/base.py
+index dca51940..448d6572 100644
+--- a/cloudigrade/config/settings/base.py
++++ b/cloudigrade/config/settings/base.py
+@@ -450,6 +450,7 @@ CELERY_ACCEPT_CONTENT = ["json", "pickle"]
+ CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=False)
+ 
+ CELERY_TASK_ROUTES = {
++    "api.tasks.perf_test_logging": {"queue": "perf_test_logging"},
+     # api.tasks
+     "api.tasks.delete_cloud_account": {"queue": "delete_cloud_account"},
+     "api.tasks.enable_account": {"queue": "enable_account"},
+diff --git a/deployment/clowdapp.yaml b/deployment/clowdapp.yaml
+index d1b178b9..4e745568 100644
+--- a/deployment/clowdapp.yaml
++++ b/deployment/clowdapp.yaml
+@@ -1585,6 +1585,7 @@ parameters:
+   displayname: List of Celery Queue Names
+   required true:
+   value: "celery,\
++    perf_test_logging,\
+     analyze_log,\
+     calculate_max_concurrent_usage,\
+     check_and_cache_sqs_queues_lengths,\
